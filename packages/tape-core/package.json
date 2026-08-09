@@ -1,0 +1,42 @@
+{
+  "name": "@lalithesh-star/tape-core",
+  "version": "0.1.0",
+  "description": "Framework-free core for real-time UIs: WebSocket transport with jittered reconnect and sequence-gap detection, a per-field coalescing buffer with frame-budgeted flush, and a subscription record store.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./protocol": {
+      "types": "./dist/protocol.d.ts",
+      "import": "./dist/protocol.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lalithesh-star/tape.git",
+    "directory": "packages/tape-core"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts src/protocol.ts --format esm --dts --sourcemap --clean",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.2.0"
+  }
+}
