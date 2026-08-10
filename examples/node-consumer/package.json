@@ -1,0 +1,13 @@
+{
+  "name": "@tape/example-node-consumer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Proof that tape-core runs in plain Node with default seams: no React, no DOM, no injected transport.",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "@lalithesh-star/tape-core": "workspace:^"
+  }
+}

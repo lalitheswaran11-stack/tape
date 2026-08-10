@@ -8,6 +8,12 @@ importers:
 
   .: {}
 
+  examples/node-consumer:
+    dependencies:
+      '@lalithesh-star/tape-core':
+        specifier: workspace:^
+        version: link:../../packages/tape-core
+
   packages/tape-core:
     devDependencies:
       '@types/node':
