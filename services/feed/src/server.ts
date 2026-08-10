@@ -140,6 +140,9 @@ export function startFeedServer(
   let owed = 0;
 
   function tick(): void {
+    // An empty universe (instruments=0) generates nothing: seqs stay 0 and
+    // snapshots are honestly empty — clients render an explicit empty state.
+    if (state.symbols.length === 0) return;
     const now = Date.now();
     if (faults.stalled(now)) {
       // Freeze generation and reset the owed clock: no catch-up burst later.
@@ -249,8 +252,10 @@ export function startFeedServer(
           const skip = Math.max(0, Math.floor(bodyNum(body, 'skip', 100)));
           // Generate and apply without transmitting: seq advances, state
           // moves on, clients see a hole they can only fill via snapshot.
-          for (let i = 0; i < skip; i++) generator.next();
-          faults.noteGap(skip);
+          if (state.symbols.length > 0) {
+            for (let i = 0; i < skip; i++) generator.next();
+            faults.noteGap(skip);
+          }
           break;
         }
         default: {
@@ -329,6 +334,11 @@ export function startFeedServer(
           return;
         }
         case 'ping': {
+          // A stalled upstream is fully silent — pongs freeze with updates
+          // (README: "sending and generating stop"), so a stall longer than
+          // the client's heartbeat window is indistinguishable from a dead
+          // socket and MUST trip its silent-death detection.
+          if (faults.stalled(Date.now())) return;
           const pong: PongMessage = {
             type: 'pong',
             t: typeof m.t === 'number' ? m.t : 0,

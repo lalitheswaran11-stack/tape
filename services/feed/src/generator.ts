@@ -70,7 +70,7 @@ export class Generator {
 
   constructor(opts: GeneratorOptions) {
     this.rng = mulberry32(opts.seed);
-    this.state = buildUniverse(this.rng, Math.max(1, opts.instruments));
+    this.state = buildUniverse(this.rng, Math.max(0, opts.instruments));
   }
 
   /** Global message index (count of messages generated so far). */
