@@ -45,13 +45,22 @@ stable estimate of intrinsic cost; measured spread notes live in
 | `flush-drain` | one full drain of ~10k staged records through `store.flushPending` | ms/drain |
 | `e2e-frame` | steady state: 84-msg chunks (≈5 000 msg/s at 60fps), ingest + flush | ns/msg |
 
-**Gate:** scores are wall time **normalized by a per-run calibration**
-(JSON.parse + field walk of a fixed frame — the hot path's primitive mix),
-so machine speed cancels and `bench/baseline.json` transfers across runner
-classes. Each score must stay within **baseline × 1.25**; the tolerance is
-justified by the measured run-to-run distribution documented at
-`TOLERANCE` in `bench/run.ts`. `--update` runs three full passes and
-commits the per-benchmark median, centering the reference.
+**Gate:** scores are wall time **normalized by calibrations that bracket
+every phase** (JSON.parse + field walk of a fixed frame — the hot path's
+primitive mix; each phase divides by the slower of its two adjacent
+brackets, so noise arriving mid-run inflates the denominator too and
+cancels). Each score must stay within **baseline × 1.25 locally, × 1.5 on
+CI**. Both numbers are measured, not guessed: the local band comes from
+the run-to-run distribution on a fixed machine, and the CI band from the
+observed cross-architecture ratios on GitHub's heterogeneous x64 fleet —
+allocation/GC-heavy phases scale up to 2.4× slower there vs 1.7× for the
+calibration mix, so normalized scores read up to +34% with zero code
+change. Calibration normalizes CPU speed, not GC behavior; that residual
+ratio is the architecture, not a regression. The full evidence (run IDs,
+per-phase ratios) is documented at `TOLERANCE` in `bench/run.ts`. Tight
+enforcement lives where the machine is constant — the dev machine;
+`--update` runs three full passes and commits the per-benchmark median,
+centering the reference.
 
 Correctness tripwires fail the run regardless of speed: exact message and
 update counts, zero gaps/reorders/stale drops, exactly two snapshots per

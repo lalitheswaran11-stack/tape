@@ -75,7 +75,9 @@ re-measures both tiers on every push. Method and baselines:
 [tools/perf](tools/perf/README.md).
 
 **Tier 1 — Node microbenchmark of tape-core hot paths** (tight gate:
-calibration-normalized score within 1.25x of the committed
+calibration-normalized score within 1.25x locally, 1.5x on CI's
+heterogeneous runner fleet — both bands measured, see
+[tools/perf](tools/perf/README.md) — of the committed
 [bench/baseline.json](tools/perf/bench/baseline.json)):
 
 | Path | Measured | Meaning |

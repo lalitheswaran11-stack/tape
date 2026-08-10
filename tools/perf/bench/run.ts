@@ -97,8 +97,23 @@ const CALIBRATION_ITERS = 10_000;
  * deviation with ~1.7x headroom while a real hot-path regression (a
  * quarter slower) still trips the gate. Do not raise this without
  * re-measuring the spread and recording it here.
+ *
+ * CI runs on a HETEROGENEOUS x64 fleet and gets a wider band, measured,
+ * not guessed. Runs 31352849222 and 31353009934 (2026-08-10) failed on a
+ * byte-identical tree that had passed three prior runner runs; run 5's
+ * calibration brackets had 1.5% spread, ruling out transient noise. The
+ * raw per-phase ratios vs the darwin/arm64 baseline machine told the
+ * real story: calibration 1.7x slower, ingest 1.8x, snapshot-sync 2.0x,
+ * flush-drain 2.4x — the allocation/GC-heavy phases scale WORSE than the
+ * calibration mix on that silicon, so their normalized scores read up to
+ * +34% with zero code change. That ratio is the architecture, not a
+ * regression, and it varies across the fleet's runner models (which is
+ * why runs 1-3 passed). Tight enforcement therefore lives where the
+ * machine is constant — local dev, 25% — and CI keeps a 50% band that
+ * still catches genuinely broken hot paths while absorbing the measured
+ * cross-model spread (~1.12x headroom over the worst observed +33.6%).
  */
-const TOLERANCE = 0.25;
+const TOLERANCE = process.env.CI ? 0.5 : 0.25;
 
 const BASELINE_PATH = join(
   dirname(fileURLToPath(import.meta.url)),
