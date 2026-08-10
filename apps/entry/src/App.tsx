@@ -16,13 +16,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  ConnectionBanner,
-  useCoalesced,
-  useConnectionState,
-  useRecordIds,
-  useStream,
-} from '@lalithesh-star/tape-react';
+import { ConnectionBanner, useConnectionState, useRecordIds, useSubscription } from '@lalithesh-star/tape-react';
 import { client } from './client';
 import type { Order, OrderSide } from './types';
 import { loadOrders, saveOrders } from './storage';
@@ -41,8 +35,13 @@ function makeId(): string {
 }
 
 export default function App() {
-  const stream = useStream(client, 'instruments');
-  useCoalesced(stream, 'volume', 'accumulate');
+  const stream = useSubscription(client, {
+    channel: 'instruments',
+
+    policy: {
+      volume: 'accumulate'
+    }
+  });
 
   const connectionState = useConnectionState(client);
   const formsEnabled =
