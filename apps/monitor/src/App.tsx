@@ -8,12 +8,7 @@
  */
 
 import { useCallback } from 'react';
-import {
-  ConnectionBanner,
-  PerfHud,
-  useCoalesced,
-  useStream,
-} from '@lalithesh-star/tape-react';
+import { ConnectionBanner, PerfHud, useSubscription } from '@lalithesh-star/tape-react';
 import { client } from './client';
 import { useUrlState } from './useUrlState';
 import { InstrumentsGrid } from './InstrumentsGrid';
@@ -27,12 +22,26 @@ export default function App() {
   // Instruments: the grid is the product — highest flush priority.
   // volume is a wire delta → 'accumulate' (lossless totals under load);
   // bid/ask/last/open/change stay on the default 'latest'.
-  const instruments = useStream(client, 'instruments', { priority: 1 });
-  useCoalesced(instruments, 'volume', 'accumulate');
+  const instruments = useSubscription(client, {
+    channel: 'instruments',
+
+    policy: {
+      volume: 'accumulate'
+    },
+
+    priority: 1
+  });
 
   // Tape: an event log → 'sequence', bounded well above what we render.
-  const tape = useStream(client, 'tape', { priority: 0 });
-  useCoalesced(tape, 'trades', { policy: 'sequence', capacity: 512 });
+  const tape = useSubscription(client, {
+    channel: 'tape',
+
+    policy: {
+      trades: { policy: 'sequence', capacity: 512 }
+    },
+
+    priority: 0
+  });
 
   const onSelect = useCallback(
     (id: string) => setSelected(id === selected ? '' : id),
