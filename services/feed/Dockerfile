@@ -15,7 +15,7 @@ WORKDIR /repo
 # match the lockfile's importer set exactly, so every workspace project's
 # package.json must be present — even for projects we neither install nor
 # build. Sources are copied only for the projects this image builds.
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 COPY apps/entry/package.json apps/entry/
 COPY apps/monitor/package.json apps/monitor/
 COPY examples/node-consumer/package.json examples/node-consumer/

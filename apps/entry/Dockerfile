@@ -17,7 +17,7 @@ WORKDIR /repo
 # Workspace skeleton. `--frozen-lockfile` requires the on-disk workspace to
 # match the lockfile's importer set exactly, so every workspace project's
 # package.json must be present. Sources only for this image's build graph.
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 COPY apps/monitor/package.json apps/monitor/
 COPY examples/node-consumer/package.json examples/node-consumer/
 COPY packages/tape-codemod/package.json packages/tape-codemod/
