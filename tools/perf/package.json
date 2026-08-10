@@ -1,0 +1,23 @@
+{
+  "name": "@tape/perf",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Two-tier performance harness: node microbenchmark gate (tight, low-noise) + browser frame-budget report (loose, high-signal), plus fault-injection scenario tests.",
+  "scripts": {
+    "bench": "tsx bench/run.ts",
+    "bench:update": "tsx bench/run.ts --update",
+    "scenarios": "playwright test --project=scenarios",
+    "perf:browser": "playwright test --project=frame-budget",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@lalithesh-star/tape-core": "workspace:^"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
