@@ -23,9 +23,21 @@
  * The gate compares MACHINE-NORMALIZED scores, not wall time: every best
  * is divided by the calibration cost (JSON.parse + field walk of
  * CALIBRATION_FRAME — the same primitive mix the hot path spends its time
- * in, measured fresh each run). Machine speed cancels out, so the committed
- * baseline.json transfers across runner classes and the tolerance can stay
- * tight enough to catch real regressions.
+ * in). Machine speed cancels out, so the committed baseline.json transfers
+ * across runner classes and the tolerance can stay tight enough to catch
+ * real regressions.
+ *
+ * Calibration BRACKETS every benchmark rather than running once up front.
+ * Observed on a shared GitHub runner (run 31352849222, 2026-08-10): a
+ * byte-identical tree that had passed the gate three times failed with
+ * all four scores up uniformly +22-34% — a noisy neighbor arrived after
+ * the single up-front calibration, so the phases slowed while the
+ * denominator did not. Each phase is now normalized by the SLOWER of its
+ * two adjacent calibrations: noise that spans a phase inflates at least
+ * one bracket and cancels. The asymmetry is deliberate — a spike that
+ * hits only a bracket can understate one run's score (self-correcting on
+ * the next run), whereas the old scheme turned neighbor noise into a
+ * false FAIL that blocks CI.
  *
  * Correctness tripwires run alongside the timing and fail the run
  * regardless of speed: exact message/update counts, zero gaps, zero
@@ -345,19 +357,37 @@ interface Pass {
   results: BenchResult[];
 }
 
-/** One full measurement pass: fresh calibration + all four benchmarks
- * (each pass's timings are normalized by ITS OWN calibration). */
+/** One full measurement pass: all four benchmarks, each BRACKETED by
+ * calibrations and normalized by the slower of its two brackets (see the
+ * header — this is what makes mid-run runner noise cancel instead of
+ * reading as a uniform regression). */
 async function measurePass(fixture: Fixture): Promise<Pass> {
-  const calibrationNsPerOp = calibrate();
-  const results: BenchResult[] = [];
-  const define = (name: string, unit: string, bestNs: number): void => {
-    results.push({ name, unit, bestNs, score: bestNs / calibrationNsPerOp });
+  const cals: number[] = [calibrate()];
+  const raw: Array<{ name: string; unit: string; bestNs: number }> = [];
+  const phase = async (
+    name: string,
+    unit: string,
+    bench: () => Promise<number>,
+  ): Promise<void> => {
+    raw.push({ name, unit, bestNs: await bench() });
+    cals.push(calibrate());
   };
-  define('snapshot-sync', 'ms/sync', await benchSnapshotSync(fixture));
-  define('ingest', 'ns/msg', await benchIngest(fixture));
-  define('flush-drain', 'ms/drain', await benchFlushDrain(fixture));
-  define('e2e-frame', 'ns/msg', await benchE2eFrame(fixture));
-  return { calibrationNsPerOp, results };
+  await phase('snapshot-sync', 'ms/sync', () => benchSnapshotSync(fixture));
+  await phase('ingest', 'ns/msg', () => benchIngest(fixture));
+  await phase('flush-drain', 'ms/drain', () => benchFlushDrain(fixture));
+  await phase('e2e-frame', 'ns/msg', () => benchE2eFrame(fixture));
+  const spreadPct =
+    (100 * (Math.max(...cals) - Math.min(...cals))) / Math.min(...cals);
+  console.log(
+    `calibration brackets: [${cals.map((c) => c.toFixed(0)).join(', ')}] ` +
+      `ns/op (spread ${spreadPct.toFixed(1)}% — drift visible here means ` +
+      'the runner was noisy, and the bracketing absorbed it)',
+  );
+  const results: BenchResult[] = raw.map((r, i) => ({
+    ...r,
+    score: r.bestNs / Math.max(cals[i]!, cals[i + 1]!),
+  }));
+  return { calibrationNsPerOp: medianOf(cals), results };
 }
 
 function medianOf(values: number[]): number {
