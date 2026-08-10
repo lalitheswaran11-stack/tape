@@ -9,7 +9,7 @@
  */
 
 import type { Page } from '@playwright/test';
-import type { MetricsSnapshot, TapeClient } from '@lalithesh-star/tape-core';
+import type { MetricsSnapshot, TapeClient } from '@lalitheswaran11-stack/tape-core';
 
 export const MONITOR_URL = 'http://localhost:4401';
 

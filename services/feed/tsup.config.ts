@@ -9,7 +9,7 @@
  *   JS implementations when the require throws, which is exactly what
  *   happens in the bundle. Without listing them, esbuild fails to resolve
  *   the specifiers at build time.
- * - `@lalithesh-star/tape-core/protocol` is imported with `import type` only
+ * - `@lalitheswaran11-stack/tape-core/protocol` is imported with `import type` only
  *   throughout src/, so it is fully erased at compile time and must not
  *   appear in the output (verified in CI-adjacent local smoke: the bundle
  *   imports only `node:` builtins).

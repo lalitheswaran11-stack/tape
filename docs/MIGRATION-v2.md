@@ -1,6 +1,6 @@
 # Migrating to the tape-react v2 subscription API
 
-Audience: teams consuming `@lalithesh-star/tape-react`. This guide covers
+Audience: teams consuming `@lalitheswaran11-stack/tape-react`. This guide covers
 the move from the v1 subscription pair (`useStream` + `useCoalesced`) to
 the v2 hook `useSubscription`. The v2 hook was introduced in **tape-react
 1.1.0**; the v1 pair is **removed as of tape-react 2.0.0**, so complete
@@ -69,7 +69,7 @@ hook — you can migrate one subscription at a time.
 
 ## The codemod
 
-`@lalithesh-star/tape-codemod` rewrites v1 call sites mechanically:
+`@lalitheswaran11-stack/tape-codemod` rewrites v1 call sites mechanically:
 
 ```
 pnpm exec tape-codemod v1-to-v2 <paths...>        # rewrite in place
@@ -94,7 +94,7 @@ const s = useSubscription(client, { channel: CHANNEL, policy: { FIELD: POLICY, .
 ```
 
 removing the `useCoalesced` statements, and rewrites the
-`@lalithesh-star/tape-react` import (drops `useStream` / `useCoalesced`
+`@lalitheswaran11-stack/tape-react` import (drops `useStream` / `useCoalesced`
 when no longer referenced, adds `useSubscription`, preserves everything
 else including aliases). Multiple independent streams in one component
 are each transformed separately, and the `policy` property is omitted
@@ -131,11 +131,11 @@ bail-out — any channel expression passes through into `{ channel: ... }`.
 
 ## Checklist
 
-1. On `@lalithesh-star/tape-react` `^1.1.0` (upgrade to it first if you
+1. On `@lalitheswaran11-stack/tape-react` `^1.1.0` (upgrade to it first if you
    are on an earlier 1.x — the codemod targets 1.x sources):
 2. `pnpm exec tape-codemod v1-to-v2 src --dry` — review the preview.
 3. `pnpm exec tape-codemod v1-to-v2 src` — apply.
 4. Search for `TODO(tape-codemod)` and migrate those sites by hand.
 5. Typecheck and run your tests. The deprecation warnings are gone when
    no v1 call sites remain.
-6. Upgrade to `@lalithesh-star/tape-react` `^2.0.0`.
+6. Upgrade to `@lalitheswaran11-stack/tape-react` `^2.0.0`.

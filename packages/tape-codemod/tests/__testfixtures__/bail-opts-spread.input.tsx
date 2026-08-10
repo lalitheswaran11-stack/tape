@@ -1,4 +1,4 @@
-import { useCoalesced, useStream } from '@lalithesh-star/tape-react';
+import { useCoalesced, useStream } from '@lalitheswaran11-stack/tape-react';
 import { client } from './client';
 import { defaults } from './config';
 

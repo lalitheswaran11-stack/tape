@@ -1,6 +1,6 @@
 # Tape
 
-[![ci](https://github.com/lalithesh-star/tape/actions/workflows/ci.yml/badge.svg)](https://github.com/lalithesh-star/tape/actions/workflows/ci.yml)
+[![ci](https://github.com/lalitheswaran11-stack/tape/actions/workflows/ci.yml/badge.svg)](https://github.com/lalitheswaran11-stack/tape/actions/workflows/ci.yml)
 
 Tape is a real-time UI platform: versioned packages, a wire protocol, and two
 independent consumer applications that prove the API surface. A framework-free
@@ -187,9 +187,9 @@ node examples/node-consumer/index.mjs ws://localhost:4400
 
 | Package | Version | What it is |
 | --- | --- | --- |
-| `@lalithesh-star/tape-core` | 1.0.0 | Framework-free core: transport, sequencer, coalescing buffer, store |
-| `@lalithesh-star/tape-react` | 2.0.0 | React bindings: `useSubscription`, `VirtualGrid`, `CanvasChart`, perf HUD |
-| `@lalithesh-star/tape-codemod` | 1.0.0 | jscodeshift transforms for the v1 → v2 migration |
+| `@lalitheswaran11-stack/tape-core` | 1.0.0 | Framework-free core: transport, sequencer, coalescing buffer, store |
+| `@lalitheswaran11-stack/tape-react` | 2.0.0 | React bindings: `useSubscription`, `VirtualGrid`, `CanvasChart`, perf HUD |
+| `@lalitheswaran11-stack/tape-codemod` | 1.0.0 | jscodeshift transforms for the v1 → v2 migration |
 | `@tape/feed` | private | Deterministic seeded feed: WS stream + REST snapshot + fault injection |
 | `@tape/monitor` | private | Consumer 1: dense read-only monitoring view (10k instruments) |
 | `@tape/entry` | private | Consumer 2: order entry, optimistic writes reconciled against the stream |

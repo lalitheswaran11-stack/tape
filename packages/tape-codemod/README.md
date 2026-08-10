@@ -1,6 +1,6 @@
-# @lalithesh-star/tape-codemod
+# @lalitheswaran11-stack/tape-codemod
 
-jscodeshift codemods for `@lalithesh-star/tape-react` major-version
+jscodeshift codemods for `@lalitheswaran11-stack/tape-react` major-version
 migrations.
 
 ## v1-to-v2
@@ -28,7 +28,7 @@ const stream = useSubscription(client, {
 ```
 
 with the `useCoalesced` statements removed and the
-`@lalithesh-star/tape-react` import rewritten: `useStream` /
+`@lalitheswaran11-stack/tape-react` import rewritten: `useStream` /
 `useCoalesced` are dropped once nothing in the file references them,
 `useSubscription` is added once, and every other specifier — including
 aliases, and aliased imports of the two v1 hooks — is preserved.

@@ -26,7 +26,7 @@ import type {
   SnapshotResponse,
   TimerScheduler,
   WebSocketLike,
-} from '@lalithesh-star/tape-core';
+} from '@lalitheswaran11-stack/tape-core';
 
 // ---------------------------------------------------------------------------
 // FakeSocket

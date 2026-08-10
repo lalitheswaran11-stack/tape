@@ -1,4 +1,4 @@
-import { useCoalesced, useRecordIds, useStream } from '@lalithesh-star/tape-react';
+import { useCoalesced, useRecordIds, useStream } from '@lalitheswaran11-stack/tape-react';
 import { client } from './client';
 
 export function Quotes() {

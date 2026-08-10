@@ -1,4 +1,4 @@
-# Changelog — @lalithesh-star/tape-react
+# Changelog — @lalitheswaran11-stack/tape-react
 
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 Versions correspond to git tags `react-v<version>`.

@@ -1,4 +1,4 @@
-# @lalithesh-star/tape-core
+# @lalitheswaran11-stack/tape-core
 
 Framework-free core for real-time UIs. tape-core turns a WebSocket firehose
 into frame-budgeted record updates behind a small API:
@@ -22,7 +22,7 @@ The per-field coalescing contract lives in [`docs/POLICIES.md`](../../docs/POLIC
 ## API
 
 ```ts
-import { createTapeClient, TAPE_DEFAULTS } from '@lalithesh-star/tape-core';
+import { createTapeClient, TAPE_DEFAULTS } from '@lalitheswaran11-stack/tape-core';
 
 const client = createTapeClient({
   url: 'ws://localhost:4400',
@@ -92,7 +92,7 @@ Node 22 has global `WebSocket` and `fetch`, so the defaults just work
 pending work; an idle client schedules nothing):
 
 ```ts
-import { createTapeClient } from '@lalithesh-star/tape-core';
+import { createTapeClient } from '@lalitheswaran11-stack/tape-core';
 
 const client = createTapeClient({ url: 'ws://localhost:4400' });
 const book = client.subscribe('book', { bid: 'latest', ask: 'latest' });
@@ -108,7 +108,7 @@ time by hand — the entire client is deterministic under injected clocks.
 ## Scripts
 
 ```
-pnpm --filter @lalithesh-star/tape-core build
-pnpm --filter @lalithesh-star/tape-core typecheck
-pnpm --filter @lalithesh-star/tape-core test
+pnpm --filter @lalitheswaran11-stack/tape-core build
+pnpm --filter @lalitheswaran11-stack/tape-core typecheck
+pnpm --filter @lalitheswaran11-stack/tape-core test
 ```

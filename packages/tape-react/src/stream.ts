@@ -15,14 +15,14 @@
  */
 
 import { useCallback, useSyncExternalStore } from 'react';
-import { resolveFieldPolicy } from '@lalithesh-star/tape-core';
+import { resolveFieldPolicy } from '@lalitheswaran11-stack/tape-core';
 import type {
   PolicySpec,
   RecordStore,
   Subscription,
   TapeClient,
   Unsubscribe,
-} from '@lalithesh-star/tape-core';
+} from '@lalitheswaran11-stack/tape-core';
 
 /** @internal Options reconciled alongside the policy (see reconcile). */
 export interface StreamOptions {

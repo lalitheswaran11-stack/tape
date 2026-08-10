@@ -1,5 +1,5 @@
 {
-  "name": "@lalithesh-star/tape-react",
+  "name": "@lalitheswaran11-stack/tape-react",
   "version": "2.0.0",
   "description": "React bindings for tape-core: subscription hooks, a virtualized grid with per-visible-row subscriptions, a DPR-aware canvas chart, connection state, and a perf HUD.",
   "license": "MIT",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lalithesh-star/tape.git",
+    "url": "https://github.com/lalitheswaran11-stack/tape.git",
     "directory": "packages/tape-react"
   },
   "scripts": {
@@ -30,7 +30,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@lalithesh-star/tape-core": "workspace:^"
+    "@lalitheswaran11-stack/tape-core": "workspace:^"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"

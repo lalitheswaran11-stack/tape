@@ -23,10 +23,10 @@ importers:
 
   apps/entry:
     dependencies:
-      '@lalithesh-star/tape-core':
+      '@lalitheswaran11-stack/tape-core':
         specifier: workspace:^
         version: link:../../packages/tape-core
-      '@lalithesh-star/tape-react':
+      '@lalitheswaran11-stack/tape-react':
         specifier: workspace:^
         version: link:../../packages/tape-react
       react:
@@ -54,10 +54,10 @@ importers:
 
   apps/monitor:
     dependencies:
-      '@lalithesh-star/tape-core':
+      '@lalitheswaran11-stack/tape-core':
         specifier: workspace:^
         version: link:../../packages/tape-core
-      '@lalithesh-star/tape-react':
+      '@lalitheswaran11-stack/tape-react':
         specifier: workspace:^
         version: link:../../packages/tape-react
       react:
@@ -85,7 +85,7 @@ importers:
 
   examples/node-consumer:
     dependencies:
-      '@lalithesh-star/tape-core':
+      '@lalitheswaran11-stack/tape-core':
         specifier: workspace:^
         version: link:../../packages/tape-core
 
@@ -128,7 +128,7 @@ importers:
 
   packages/tape-react:
     dependencies:
-      '@lalithesh-star/tape-core':
+      '@lalitheswaran11-stack/tape-core':
         specifier: workspace:^
         version: link:../tape-core
     devDependencies:
@@ -169,7 +169,7 @@ importers:
         specifier: ^8.18.0
         version: 8.21.3
     devDependencies:
-      '@lalithesh-star/tape-core':
+      '@lalitheswaran11-stack/tape-core':
         specifier: workspace:^
         version: link:../../packages/tape-core
       '@types/node':
@@ -193,7 +193,7 @@ importers:
 
   tools/perf:
     dependencies:
-      '@lalithesh-star/tape-core':
+      '@lalitheswaran11-stack/tape-core':
         specifier: workspace:^
         version: link:../../packages/tape-core
     devDependencies:

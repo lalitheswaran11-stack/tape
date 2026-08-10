@@ -23,7 +23,7 @@ import type {
   UpdateMessage,
   SnapshotResponse,
   ServerMessage,
-} from '@lalithesh-star/tape-core/protocol';
+} from '@lalitheswaran11-stack/tape-core/protocol';
 import { Generator } from './generator';
 import { CHANNELS, isChannel, type Channel } from './state';
 import { FaultController } from './faults';

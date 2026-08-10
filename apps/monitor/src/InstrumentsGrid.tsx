@@ -11,8 +11,8 @@
  */
 
 import { useMemo } from 'react';
-import { useRecordIds, VirtualGrid } from '@lalithesh-star/tape-react';
-import type { CellValue, ColumnDef, Stream } from '@lalithesh-star/tape-react';
+import { useRecordIds, VirtualGrid } from '@lalitheswaran11-stack/tape-react';
+import type { CellValue, ColumnDef, Stream } from '@lalitheswaran11-stack/tape-react';
 import { formatPrice, formatSignedPct, formatVolume, trendClass } from './format';
 
 function priceCell(v: CellValue) {

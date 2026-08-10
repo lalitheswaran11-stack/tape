@@ -42,8 +42,8 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { createTapeClient } from '@lalithesh-star/tape-core';
-import type { TapeClient } from '@lalithesh-star/tape-core';
+import { createTapeClient } from '@lalitheswaran11-stack/tape-core';
+import type { TapeClient } from '@lalitheswaran11-stack/tape-core';
 
 import {
   FakeSocket,

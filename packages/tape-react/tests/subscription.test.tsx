@@ -8,7 +8,7 @@
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { StrictMode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { PolicySpec, TapeClient } from '@lalithesh-star/tape-core';
+import type { PolicySpec, TapeClient } from '@lalitheswaran11-stack/tape-core';
 import { useRecord, useRecordIds, useSubscription } from '../src';
 import type { SubscriptionSpec } from '../src';
 import { makeHarness, settle, snap, upd } from './helpers';

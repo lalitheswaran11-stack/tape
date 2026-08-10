@@ -4,8 +4,8 @@
  * chart draws on its own rAF and never touches the DOM per tick.
  */
 
-import { CanvasChart, useRecord } from '@lalithesh-star/tape-react';
-import type { Stream } from '@lalithesh-star/tape-react';
+import { CanvasChart, useRecord } from '@lalitheswaran11-stack/tape-react';
+import type { Stream } from '@lalitheswaran11-stack/tape-react';
 import type { InstrumentFields } from './types';
 import { formatPrice, formatSignedPct, formatVolume, trendClass } from './format';
 

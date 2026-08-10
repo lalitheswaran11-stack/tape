@@ -3,7 +3,7 @@
  * every component imports this instance.
  */
 
-import { createTapeClient } from '@lalithesh-star/tape-core';
+import { createTapeClient } from '@lalitheswaran11-stack/tape-core';
 
 const url: string =
   (import.meta.env.VITE_TAPE_URL as string | undefined) ?? 'ws://localhost:4400';

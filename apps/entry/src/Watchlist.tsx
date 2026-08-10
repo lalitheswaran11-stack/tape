@@ -6,8 +6,8 @@
 
 import { memo, useCallback, useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { useRecord } from '@lalithesh-star/tape-react';
-import type { Stream } from '@lalithesh-star/tape-react';
+import { useRecord } from '@lalitheswaran11-stack/tape-react';
+import type { Stream } from '@lalitheswaran11-stack/tape-react';
 import type { InstrumentFields } from './types';
 import { loadWatchlist, saveWatchlist } from './storage';
 import { fmtPrice, fmtSignedPct, polarityClass } from './format';

@@ -5,7 +5,7 @@
 
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { TapeClient } from '@lalithesh-star/tape-core';
+import type { TapeClient } from '@lalitheswaran11-stack/tape-core';
 import { readRowRenderCount, useSubscription, VirtualGrid } from '../src';
 import type { ColumnDef } from '../src';
 import {

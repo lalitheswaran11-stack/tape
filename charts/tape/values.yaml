@@ -9,7 +9,7 @@
 
 feed:
   image:
-    repository: ghcr.io/lalithesh-star/tape-feed
+    repository: ghcr.io/lalitheswaran11-stack/tape-feed
     tag: latest
   replicas: 1
   # Feed generator config — injected as TAPE_* env vars.
@@ -28,7 +28,7 @@ feed:
 
 monitor:
   image:
-    repository: ghcr.io/lalithesh-star/tape-monitor
+    repository: ghcr.io/lalitheswaran11-stack/tape-monitor
     tag: latest
   replicas: 1
   service:
@@ -44,7 +44,7 @@ monitor:
 
 entry:
   image:
-    repository: ghcr.io/lalithesh-star/tape-entry
+    repository: ghcr.io/lalitheswaran11-stack/tape-entry
     tag: latest
   replicas: 1
   service:

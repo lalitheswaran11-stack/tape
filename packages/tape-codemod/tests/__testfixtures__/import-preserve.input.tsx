@@ -4,8 +4,8 @@ import {
   useCoalesced,
   useRecord as useRec,
   useStream,
-} from '@lalithesh-star/tape-react';
-import type { Stream } from '@lalithesh-star/tape-react';
+} from '@lalitheswaran11-stack/tape-react';
+import type { Stream } from '@lalitheswaran11-stack/tape-react';
 import { client } from './client';
 
 function Last({ stream }: { stream: Stream }) {

@@ -3,7 +3,7 @@
  * directly — they go through useSubscription.
  */
 
-import { createTapeClient } from '@lalithesh-star/tape-core';
+import { createTapeClient } from '@lalitheswaran11-stack/tape-core';
 
 // Feed url priority: '?feed=' query param (lets the perf harness point one
 // page at a different feed), then build-time env, then the local default.

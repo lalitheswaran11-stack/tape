@@ -1,4 +1,4 @@
-import { useCoalesced as coalesce, useStream as openStream } from '@lalithesh-star/tape-react';
+import { useCoalesced as coalesce, useStream as openStream } from '@lalitheswaran11-stack/tape-react';
 import { client } from './client';
 
 export function Quotes() {

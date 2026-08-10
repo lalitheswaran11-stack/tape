@@ -5,7 +5,7 @@
  * accessors for the jsdom stubs installed by tests/setup.ts.
  */
 
-import { createTapeClient } from '@lalithesh-star/tape-core';
+import { createTapeClient } from '@lalitheswaran11-stack/tape-core';
 import type {
   ClientMessage,
   ConnectionState,
@@ -23,7 +23,7 @@ import type {
   WebSocketFactory,
   WebSocketLike,
   WireFieldValue,
-} from '@lalithesh-star/tape-core';
+} from '@lalitheswaran11-stack/tape-core';
 
 // ---------------------------------------------------------------------------
 // FakeSocket

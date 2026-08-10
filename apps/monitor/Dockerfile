@@ -37,8 +37,8 @@ ENV VITE_TAPE_URL=${VITE_TAPE_URL}
 
 # Library builds first — vite resolves the workspace packages via their
 # package.json `exports`, which point at dist/.
-RUN pnpm --filter @lalithesh-star/tape-core build \
- && pnpm --filter @lalithesh-star/tape-react build \
+RUN pnpm --filter @lalitheswaran11-stack/tape-core build \
+ && pnpm --filter @lalitheswaran11-stack/tape-react build \
  && pnpm --filter @tape/monitor build
 
 ########################################################################

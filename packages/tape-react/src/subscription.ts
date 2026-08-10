@@ -14,7 +14,7 @@
  */
 
 import { useEffect, useRef } from 'react';
-import type { PolicySpec, TapeClient } from '@lalithesh-star/tape-core';
+import type { PolicySpec, TapeClient } from '@lalitheswaran11-stack/tape-core';
 import { StreamHandle } from './stream';
 import type { Stream } from './stream';
 

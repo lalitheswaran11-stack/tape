@@ -9,7 +9,7 @@
  */
 
 import { useCallback, useSyncExternalStore } from 'react';
-import type { Fields, TapeRecord } from '@lalithesh-star/tape-core';
+import type { Fields, TapeRecord } from '@lalitheswaran11-stack/tape-core';
 import { asHandle } from './stream';
 import type { Stream } from './stream';
 

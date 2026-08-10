@@ -1,5 +1,5 @@
-import { ConnectionBanner, PerfHud, useRecord as useRec, useSubscription } from '@lalithesh-star/tape-react';
-import type { Stream } from '@lalithesh-star/tape-react';
+import { ConnectionBanner, PerfHud, useRecord as useRec, useSubscription } from '@lalitheswaran11-stack/tape-react';
+import type { Stream } from '@lalitheswaran11-stack/tape-react';
 import { client } from './client';
 
 function Last({ stream }: { stream: Stream }) {

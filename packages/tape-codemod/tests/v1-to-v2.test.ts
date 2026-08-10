@@ -103,7 +103,7 @@ describe('v1-to-v2', () => {
 
   it('reuses an existing (aliased) useSubscription import', () => {
     const source = [
-      "import { useStream, useSubscription as useSub } from '@lalithesh-star/tape-react';",
+      "import { useStream, useSubscription as useSub } from '@lalitheswaran11-stack/tape-react';",
       "import { client } from './client';",
       'export function X() {',
       "  const s = useStream(client, 'quotes');",

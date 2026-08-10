@@ -7,8 +7,8 @@
  */
 
 import type { ReactNode } from 'react';
-import { useRecord } from '@lalithesh-star/tape-react';
-import type { Stream } from '@lalithesh-star/tape-react';
+import { useRecord } from '@lalitheswaran11-stack/tape-react';
+import type { Stream } from '@lalitheswaran11-stack/tape-react';
 import type { TapeFields } from './types';
 import { formatPrice, formatTime } from './format';
 

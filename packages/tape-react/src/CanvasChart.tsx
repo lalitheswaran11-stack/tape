@@ -18,7 +18,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
-import type { TapeRecord } from '@lalithesh-star/tape-core';
+import type { TapeRecord } from '@lalitheswaran11-stack/tape-core';
 import type { Stream } from './stream';
 import { useHandleStore } from './stream';
 

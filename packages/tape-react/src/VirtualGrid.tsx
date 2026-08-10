@@ -17,7 +17,7 @@ import type {
   FieldValue,
   SequenceEntry,
   TapeRecord,
-} from '@lalithesh-star/tape-core';
+} from '@lalitheswaran11-stack/tape-core';
 import type { Stream } from './stream';
 import { useRecord } from './records';
 

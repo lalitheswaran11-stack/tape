@@ -2,7 +2,7 @@
 
 The no-React boundary proof.
 
-`@lalithesh-star/tape-core` claims to be framework-free: every
+`@lalitheswaran11-stack/tape-core` claims to be framework-free: every
 environment-specific dependency — WebSocket construction, fetch, frame
 scheduling, timers, clock, randomness — enters through an injectable seam
 with sensible defaults, and the core never touches React or the DOM. That

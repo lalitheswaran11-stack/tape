@@ -1,6 +1,6 @@
-# @lalithesh-star/tape-react
+# @lalitheswaran11-stack/tape-react
 
-React bindings for [`@lalithesh-star/tape-core`](../tape-core/README.md):
+React bindings for [`@lalitheswaran11-stack/tape-core`](../tape-core/README.md):
 subscription hooks built on `useSyncExternalStore`, a virtualized grid with
 **per-visible-row subscriptions**, a DPR-aware canvas chart, a connection
 banner, and a performance HUD.
@@ -42,11 +42,11 @@ spellings identical across components that share a channel.
 ## Full example
 
 ```tsx
-import { createTapeClient } from '@lalithesh-star/tape-core';
+import { createTapeClient } from '@lalitheswaran11-stack/tape-core';
 import {
   ConnectionBanner, PerfHud, useRecordIds, useSubscription, VirtualGrid,
-} from '@lalithesh-star/tape-react';
-import type { ColumnDef } from '@lalithesh-star/tape-react';
+} from '@lalitheswaran11-stack/tape-react';
+import type { ColumnDef } from '@lalitheswaran11-stack/tape-react';
 
 const client = createTapeClient({ url: 'ws://localhost:4400' });
 client.connect();
@@ -165,9 +165,9 @@ component accepts `className` and `style`.
 ## Scripts
 
 ```
-pnpm --filter @lalithesh-star/tape-react build
-pnpm --filter @lalithesh-star/tape-react typecheck
-pnpm --filter @lalithesh-star/tape-react test
+pnpm --filter @lalitheswaran11-stack/tape-react build
+pnpm --filter @lalitheswaran11-stack/tape-react typecheck
+pnpm --filter @lalitheswaran11-stack/tape-react test
 ```
 
 Tests drive a **real** `createTapeClient` through injected fakes (socket,

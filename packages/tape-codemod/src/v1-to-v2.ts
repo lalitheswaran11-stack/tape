@@ -12,7 +12,7 @@
  *     ...OPTS properties               // priority / snapshot, verbatim
  *   });
  *
- * and rewrite the '@lalithesh-star/tape-react' import (drop useStream /
+ * and rewrite the '@lalitheswaran11-stack/tape-react' import (drop useStream /
  * useCoalesced once unreferenced, add useSubscription once, preserve all
  * other specifiers and aliases; aliased imports of the two hooks are
  * resolved by local name).
@@ -42,7 +42,7 @@ import type {
   Transform,
 } from 'jscodeshift';
 
-const PKG = '@lalithesh-star/tape-react';
+const PKG = '@lalitheswaran11-stack/tape-react';
 const TODO_MARKER = 'TODO(tape-codemod)';
 const TODO_PREFIX = 'TODO(tape-codemod): manual migration needed';
 

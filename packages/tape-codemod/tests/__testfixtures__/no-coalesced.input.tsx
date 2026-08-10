@@ -1,4 +1,4 @@
-import { useRecord, useStream } from '@lalithesh-star/tape-react';
+import { useRecord, useStream } from '@lalitheswaran11-stack/tape-react';
 import { client } from './client';
 
 export function Price({ id }: { id: string }) {

@@ -36,7 +36,7 @@ RUN pnpm install --frozen-lockfile --filter @tape/feed...
 # tape-core first (feed imports its protocol types), then the feed bundle.
 # tsup emits a single self-contained dist/main.js (ws inlined, node builtins
 # only) — see services/feed/tsup.config.ts.
-RUN pnpm --filter @lalithesh-star/tape-core build \
+RUN pnpm --filter @lalitheswaran11-stack/tape-core build \
  && pnpm --filter @tape/feed build
 
 ########################################################################

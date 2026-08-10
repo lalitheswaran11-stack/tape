@@ -7,7 +7,7 @@ import type {
   ConnectionState,
   MetricsSnapshot,
   TapeClient,
-} from '@lalithesh-star/tape-core';
+} from '@lalitheswaran11-stack/tape-core';
 
 export function useConnectionState(client: TapeClient): ConnectionState {
   const subscribe = useCallback(

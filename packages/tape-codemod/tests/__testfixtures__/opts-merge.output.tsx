@@ -1,4 +1,4 @@
-import { useRecordIds, useSubscription } from '@lalithesh-star/tape-react';
+import { useRecordIds, useSubscription } from '@lalitheswaran11-stack/tape-react';
 import { client } from './client';
 
 export function Book({ channel }: { channel: string }) {

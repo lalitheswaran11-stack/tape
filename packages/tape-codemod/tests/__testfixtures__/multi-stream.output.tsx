@@ -1,4 +1,4 @@
-import { useSubscription } from '@lalithesh-star/tape-react';
+import { useSubscription } from '@lalitheswaran11-stack/tape-react';
 import { client } from './client';
 import { InstrumentsGrid } from './InstrumentsGrid';
 import { TapePanel } from './TapePanel';

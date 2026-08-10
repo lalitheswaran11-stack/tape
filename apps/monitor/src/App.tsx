@@ -8,7 +8,7 @@
  */
 
 import { useCallback } from 'react';
-import { ConnectionBanner, PerfHud, useSubscription } from '@lalithesh-star/tape-react';
+import { ConnectionBanner, PerfHud, useSubscription } from '@lalitheswaran11-stack/tape-react';
 import { client } from './client';
 import { useUrlState } from './useUrlState';
 import { InstrumentsGrid } from './InstrumentsGrid';

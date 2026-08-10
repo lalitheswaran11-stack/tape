@@ -1,6 +1,6 @@
 /** Small numeric helpers shared by burst.spec and the frame-budget run. */
 
-import type { MetricsSnapshot } from '@lalithesh-star/tape-core';
+import type { MetricsSnapshot } from '@lalitheswaran11-stack/tape-core';
 
 /** Nearest-rank percentile over an UNSORTED sample (copies + sorts). */
 export function percentile(samples: readonly number[], p: number): number {

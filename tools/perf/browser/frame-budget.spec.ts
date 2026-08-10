@@ -23,7 +23,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
 import type { CDPSession, Page } from '@playwright/test';
-import type { MetricsSnapshot } from '@lalithesh-star/tape-core';
+import type { MetricsSnapshot } from '@lalitheswaran11-stack/tape-core';
 import {
   attachErrorSentry,
   installFrameProbe,

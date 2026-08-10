@@ -5,7 +5,7 @@
 
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
-import type { TapeClient } from '@lalithesh-star/tape-core';
+import type { TapeClient } from '@lalitheswaran11-stack/tape-core';
 import { ConnectionBanner, PerfHud, useConnectionState } from '../src';
 import { makeHarness } from './helpers';
 

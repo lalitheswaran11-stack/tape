@@ -16,7 +16,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ConnectionBanner, useConnectionState, useRecordIds, useSubscription } from '@lalithesh-star/tape-react';
+import { ConnectionBanner, useConnectionState, useRecordIds, useSubscription } from '@lalitheswaran11-stack/tape-react';
 import { client } from './client';
 import type { Order, OrderSide } from './types';
 import { loadOrders, saveOrders } from './storage';

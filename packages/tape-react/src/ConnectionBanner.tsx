@@ -5,7 +5,7 @@
  */
 
 import type { CSSProperties } from 'react';
-import type { ConnectionState, TapeClient } from '@lalithesh-star/tape-core';
+import type { ConnectionState, TapeClient } from '@lalitheswaran11-stack/tape-core';
 import { useConnectionState } from './client-hooks';
 
 const STATE_COLOR: Record<ConnectionState, string> = {

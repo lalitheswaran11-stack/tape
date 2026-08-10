@@ -13,7 +13,7 @@
  * exactly 1.
  */
 
-import type { UpdateMessage, RecordUpdate } from '@lalithesh-star/tape-core/protocol';
+import type { UpdateMessage, RecordUpdate } from '@lalitheswaran11-stack/tape-core/protocol';
 import { mulberry32, randInt, type Rng } from './prng';
 import {
   FeedState,

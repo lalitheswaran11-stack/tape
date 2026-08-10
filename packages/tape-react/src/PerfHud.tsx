@@ -7,7 +7,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
-import type { TapeClient } from '@lalithesh-star/tape-core';
+import type { TapeClient } from '@lalitheswaran11-stack/tape-core';
 import { useMetrics } from './client-hooks';
 import { readRowRenderCount } from './VirtualGrid';
 

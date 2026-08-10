@@ -5,7 +5,7 @@
 
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { TapeClient } from '@lalithesh-star/tape-core';
+import type { TapeClient } from '@lalitheswaran11-stack/tape-core';
 import { CanvasChart, useSubscription } from '../src';
 import {
   fireAnimationFrames,

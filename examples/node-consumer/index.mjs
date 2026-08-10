@@ -1,5 +1,5 @@
 /**
- * Plain-Node consumer of @lalithesh-star/tape-core with DEFAULT seams.
+ * Plain-Node consumer of @lalitheswaran11-stack/tape-core with DEFAULT seams.
  *
  * Nothing is injected: Node 22 supplies globalThis.WebSocket and fetch,
  * and the client's frame scheduler falls back to setTimeout when
@@ -13,7 +13,7 @@
  * instrument records, no inbound messages, or a coalesce ratio below 1.
  */
 
-import { createTapeClient } from '@lalithesh-star/tape-core';
+import { createTapeClient } from '@lalitheswaran11-stack/tape-core';
 
 // ---------------------------------------------------------------------------
 // argv: optional positional ws URL, optional --duration <ms>

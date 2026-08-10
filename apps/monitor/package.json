@@ -11,8 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@lalithesh-star/tape-core": "workspace:^",
-    "@lalithesh-star/tape-react": "workspace:^",
+    "@lalitheswaran11-stack/tape-core": "workspace:^",
+    "@lalitheswaran11-stack/tape-react": "workspace:^",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

@@ -1,4 +1,4 @@
-# API surface: @lalithesh-star/tape-core
+# API surface: @lalitheswaran11-stack/tape-core
 
 Version: 1.0.0
 

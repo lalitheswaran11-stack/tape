@@ -25,7 +25,7 @@ import type {
   SnapshotRecord,
   SnapshotResponse,
   UpdateMessage,
-} from '@lalithesh-star/tape-core';
+} from '@lalitheswaran11-stack/tape-core';
 
 export const UNIVERSE_SIZE = 10_000;
 export const TAPE_RECORD_COUNT = 1_000;

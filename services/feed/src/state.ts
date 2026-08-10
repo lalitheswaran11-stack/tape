@@ -12,7 +12,7 @@
 import type {
   SnapshotRecord,
   SequenceEntry,
-} from '@lalithesh-star/tape-core/protocol';
+} from '@lalitheswaran11-stack/tape-core/protocol';
 
 export const CHANNELS = ['instruments', 'tape'] as const;
 export type Channel = (typeof CHANNELS)[number];

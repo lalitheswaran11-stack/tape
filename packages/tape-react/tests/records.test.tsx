@@ -6,7 +6,7 @@
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { memo } from 'react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { TapeClient } from '@lalithesh-star/tape-core';
+import type { TapeClient } from '@lalitheswaran11-stack/tape-core';
 import { useRecord, useRecordIds, useSubscription } from '../src';
 import type { Stream } from '../src';
 import { makeHarness, settle, snap, upd } from './helpers';
