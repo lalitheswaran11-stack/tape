@@ -1,0 +1,197 @@
+# One pipeline: build -> lint -> typecheck -> unit tests -> node bench gate ->
+# api-report check -> scenarios + browser perf gate -> publish package / images.
+# (Build first: workspace packages typecheck against each other's dist/*.d.ts.)
+#
+# Job graph:
+#   checks ──> browser ──> publish   (only on core-v*/react-v*/codemod-v* tags)
+#                    └───> images    (only on push to main)
+name: ci
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'core-v*'
+      - 'react-v*'
+      - 'codemod-v*'
+  pull_request:
+
+jobs:
+  # Everything that runs headless on one runner: static gates, unit tests,
+  # and the tier-1 node bench gate.
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # No explicit version: pnpm/action-setup reads the pinned version from
+      # the root package.json `packageManager` field.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Build FIRST: tape-react, the apps, and perf typecheck against
+      # tape-core's dist/*.d.ts (workspace `exports` point at dist), so a
+      # clean checkout must build before it can typecheck.
+      - run: pnpm -r build
+
+      - run: pnpm lint
+
+      - run: pnpm -r typecheck
+
+      - run: pnpm -r test
+
+      # Tier-1 perf gate. baseline.json is calibration-normalized (scores are
+      # relative to a probe measured on the same machine in the same run), so
+      # this gate stays meaningful on noisy shared runners instead of
+      # measuring GitHub's hardware-of-the-day.
+      - run: pnpm --filter @tape/perf bench
+
+      - run: pnpm api-report:check
+
+  # Tier-2 gates: fault-injection scenarios + browser frame-budget report,
+  # driven by Playwright against the real feed + built monitor app.
+  browser:
+    runs-on: ubuntu-latest
+    needs: checks
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm -r build
+
+      - name: Resolve Playwright version
+        id: playwright-version
+        working-directory: tools/perf
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+
+      # Runs even on cache hit: browser download is skipped when cached, but
+      # --with-deps still installs the OS packages (which are not cached).
+      - name: Install Playwright chromium
+        working-directory: tools/perf
+        run: pnpm exec playwright install --with-deps chromium
+
+      - run: pnpm --filter @tape/perf scenarios
+
+      - run: pnpm --filter @tape/perf perf:browser
+
+      # always(): a failed gate must still ship its evidence.
+      - name: Upload perf report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-perf-report
+          path: tools/perf/report/
+          if-no-files-found: warn
+
+  # Publish exactly one package to GitHub Packages, chosen by tag prefix.
+  # Each package.json already carries publishConfig.registry.
+  publish:
+    if: startsWith(github.ref, 'refs/tags/core-v') || startsWith(github.ref, 'refs/tags/react-v') || startsWith(github.ref, 'refs/tags/codemod-v')
+    runs-on: ubuntu-latest
+    needs: [checks, browser]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      # registry-url makes setup-node write an .npmrc that authenticates
+      # via NODE_AUTH_TOKEN.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://npm.pkg.github.com
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm -r build
+
+      - name: Map tag prefix to package directory
+        id: pkg
+        run: |
+          case "$GITHUB_REF_NAME" in
+            core-v*)    echo "dir=packages/tape-core"    >> "$GITHUB_OUTPUT" ;;
+            react-v*)   echo "dir=packages/tape-react"   >> "$GITHUB_OUTPUT" ;;
+            codemod-v*) echo "dir=packages/tape-codemod" >> "$GITHUB_OUTPUT" ;;
+            *) echo "unexpected tag: $GITHUB_REF_NAME" >&2; exit 1 ;;
+          esac
+
+      - name: Publish
+        working-directory: ${{ steps.pkg.outputs.dir }}
+        run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Build and push the three images to ghcr. Dockerfiles are multi-stage and
+  # self-contained (they run the pnpm install + builds inside the builder
+  # stage), so no node/pnpm setup is needed on the runner.
+  images:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [checks, browser]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push tape-feed
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: services/feed/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/lalithesh-star/tape-feed:latest
+            ghcr.io/lalithesh-star/tape-feed:${{ github.sha }}
+
+      - name: Build and push tape-monitor
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/monitor/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/lalithesh-star/tape-monitor:latest
+            ghcr.io/lalithesh-star/tape-monitor:${{ github.sha }}
+
+      - name: Build and push tape-entry
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/entry/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/lalithesh-star/tape-entry:latest
+            ghcr.io/lalithesh-star/tape-entry:${{ github.sha }}

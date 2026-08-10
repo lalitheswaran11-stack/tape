@@ -1,0 +1,8 @@
+apiVersion: v2
+name: tape
+description: >-
+  Tape platform: the deterministic seeded feed service plus the monitor and
+  entry web apps that consume it.
+type: application
+version: 0.1.0
+appVersion: "2.0.0"

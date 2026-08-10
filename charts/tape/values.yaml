@@ -1,0 +1,71 @@
+# Default values for the tape chart.
+#
+# The two knobs that matter operationally:
+#   feed.rate      — update messages/sec the feed generates (load dial)
+#   feed.replicas  — feed instances. NOTE: each replica runs its own
+#                    generator; with the same seed every replica produces an
+#                    identical stream, but seqs are per-instance, so clients
+#                    must stick to one pod (fine for the default of 1).
+
+feed:
+  image:
+    repository: ghcr.io/lalithesh-star/tape-feed
+    tag: latest
+  replicas: 1
+  # Feed generator config — injected as TAPE_* env vars.
+  seed: 42
+  rate: 5000
+  instruments: 10000
+  service:
+    port: 4400
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 512Mi
+
+monitor:
+  image:
+    repository: ghcr.io/lalithesh-star/tape-monitor
+    tag: latest
+  replicas: 1
+  service:
+    # nginx-unprivileged listens on 8080; service port and targetPort track it.
+    port: 8080
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 128Mi
+
+entry:
+  image:
+    repository: ghcr.io/lalithesh-star/tape-entry
+    tag: latest
+  replicas: 1
+  service:
+    port: 8080
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 128Mi
+
+ingress:
+  enabled: false
+  className: ""
+  host: tape.local
+  # Path prefix per app on the single host. The feed path exists for the WS
+  # stream + REST snapshot; note the app images bake VITE_TAPE_URL at build
+  # time, so point that at whatever the feed is reachable as.
+  paths:
+    monitor: /
+    entry: /entry
+    feed: /feed
+  annotations: {}

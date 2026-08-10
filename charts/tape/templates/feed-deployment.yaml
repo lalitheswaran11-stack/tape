@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tape.fullname" . }}-feed
+  labels:
+    {{- include "tape.labels" . | nindent 4 }}
+    app.kubernetes.io/component: feed
+spec:
+  replicas: {{ .Values.feed.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tape.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: feed
+  template:
+    metadata:
+      labels:
+        {{- include "tape.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: feed
+    spec:
+      containers:
+        - name: feed
+          image: "{{ .Values.feed.image.repository }}:{{ .Values.feed.image.tag }}"
+          ports:
+            - name: http
+              containerPort: {{ .Values.feed.service.port }}
+              protocol: TCP
+          env:
+            - name: TAPE_PORT
+              value: {{ .Values.feed.service.port | quote }}
+            - name: TAPE_SEED
+              value: {{ .Values.feed.seed | quote }}
+            - name: TAPE_RATE
+              value: {{ .Values.feed.rate | quote }}
+            - name: TAPE_INSTRUMENTS
+              value: {{ .Values.feed.instruments | quote }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.feed.resources | nindent 12 }}

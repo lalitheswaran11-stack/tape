@@ -1,0 +1,31 @@
+tape {{ .Chart.AppVersion }} deployed as release "{{ .Release.Name }}".
+
+Components:
+  feed     {{ .Values.feed.replicas }} replica(s)  seed={{ .Values.feed.seed }} rate={{ .Values.feed.rate }}/s instruments={{ .Values.feed.instruments }}
+  monitor  {{ .Values.monitor.replicas }} replica(s)
+  entry    {{ .Values.entry.replicas }} replica(s)
+
+Quick look via port-forward (the app bundles point at ws://localhost:4400 by
+default, so forwarding the feed to local port 4400 makes both apps live):
+
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "tape.fullname" . }}-feed 4400:{{ .Values.feed.service.port }} &
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "tape.fullname" . }}-monitor 8080:{{ .Values.monitor.service.port }} &
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "tape.fullname" . }}-entry 8081:{{ .Values.entry.service.port }} &
+
+  open http://localhost:8080     # monitor: dense read-only grid + tape
+  open http://localhost:8081     # entry:   forms + optimistic writes
+  curl  http://localhost:4400/healthz
+  curl 'http://localhost:4400/snapshot?channel=instruments'
+
+Turn the load dial:
+
+  helm upgrade {{ .Release.Name }} charts/tape --set feed.rate=50000
+{{- if .Values.ingress.enabled }}
+
+Ingress is enabled on host {{ .Values.ingress.host }}:
+  monitor  {{ .Values.ingress.paths.monitor }}
+  entry    {{ .Values.ingress.paths.entry }}
+  feed     {{ .Values.ingress.paths.feed }}
+(If serving the apps through the ingress, rebuild the app images with
+--build-arg VITE_TAPE_URL=ws://{{ .Values.ingress.host }}{{ .Values.ingress.paths.feed }} so they dial the right feed.)
+{{- end }}

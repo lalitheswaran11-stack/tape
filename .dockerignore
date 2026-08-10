@@ -1,0 +1,28 @@
+# Applies to every image build (all three Dockerfiles use the repo root as
+# build context). The builder stages run `pnpm install` and rebuild all
+# workspace packages from source inside the image, so no host-built output
+# and no host node_modules should ever enter the context.
+
+# dependencies — always reinstalled in the builder
+**/node_modules
+
+# build outputs — every dist (tsup, vite) is rebuilt inside the builders;
+# nothing in any Dockerfile COPYs a host dist
+**/dist
+**/*.tsbuildinfo
+
+# vcs / ci / deploy metadata — irrelevant to image content
+.git
+.github
+charts
+
+# test and perf artifacts
+**/coverage
+**/test-results
+**/playwright-report
+tools/perf/report
+
+# scratch
+**/*.log
+**/.DS_Store
+**/.vite

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tape.fullname" . }}-feed
+  labels:
+    {{- include "tape.labels" . | nindent 4 }}
+    app.kubernetes.io/component: feed
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: {{ .Values.feed.service.port }}
+      targetPort: http
+      protocol: TCP
+  selector:
+    {{- include "tape.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: feed

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tape.fullname" . }}-monitor
+  labels:
+    {{- include "tape.labels" . | nindent 4 }}
+    app.kubernetes.io/component: monitor
+spec:
+  replicas: {{ .Values.monitor.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tape.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: monitor
+  template:
+    metadata:
+      labels:
+        {{- include "tape.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: monitor
+    spec:
+      containers:
+        - name: monitor
+          image: "{{ .Values.monitor.image.repository }}:{{ .Values.monitor.image.tag }}"
+          ports:
+            - name: http
+              containerPort: {{ .Values.monitor.service.port }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.monitor.resources | nindent 12 }}

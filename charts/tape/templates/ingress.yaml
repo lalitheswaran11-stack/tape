@@ -1,0 +1,43 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "tape.fullname" . }}
+  labels:
+    {{- include "tape.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.ingress.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.paths.entry }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "tape.fullname" . }}-entry
+                port:
+                  name: http
+          - path: {{ .Values.ingress.paths.feed }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "tape.fullname" . }}-feed
+                port:
+                  name: http
+          # monitor last: its path defaults to "/" and Prefix "/" matches
+          # everything not caught by a more specific path above.
+          - path: {{ .Values.ingress.paths.monitor }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "tape.fullname" . }}-monitor
+                port:
+                  name: http
+{{- end }}

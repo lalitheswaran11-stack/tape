@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tape.fullname" . }}-entry
+  labels:
+    {{- include "tape.labels" . | nindent 4 }}
+    app.kubernetes.io/component: entry
+spec:
+  replicas: {{ .Values.entry.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tape.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: entry
+  template:
+    metadata:
+      labels:
+        {{- include "tape.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: entry
+    spec:
+      containers:
+        - name: entry
+          image: "{{ .Values.entry.image.repository }}:{{ .Values.entry.image.tag }}"
+          ports:
+            - name: http
+              containerPort: {{ .Values.entry.service.port }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.entry.resources | nindent 12 }}
