@@ -88,6 +88,10 @@ calibration-normalized score within 1.25x of the committed
 **Tier 2 — real Chromium against the real feed** (median of 3 x 30 s runs at
 4x CPU throttle, 5 000 msg/s over 10 000 rows): p95 frame interval **9.3 ms**
 against a 25 ms gate, longest task **0 ms**, **0.5%** of frames over 16.7 ms.
+(On GPU-less CI runners the frame-interval gate widens to a documented
+200 ms backstop — the software compositor, not tape, sets frame cadence
+there; the longest-task gate applies unchanged. See
+[tools/perf](tools/perf/README.md).)
 
 **Scenario highlights** (fault-injection suite, all six specs green; counts
 and rates below are from a representative run — the specs gate the

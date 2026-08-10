@@ -6,7 +6,7 @@ environment is good at:
 | Tier | Where | Gate | Command |
 | --- | --- | --- | --- |
 | 1 | plain Node, fake seams | **tight** — normalized scores vs a committed baseline | `pnpm --filter @tape/perf bench` |
-| 2 | real Chromium + real feed | **loose** — median p95 frame ≤ 25ms, longest task ≤ 100ms; the report is the product | `pnpm --filter @tape/perf perf:browser` |
+| 2 | real Chromium + real feed | **loose** — median p95 frame ≤ 25ms (local; 200ms backstop on GPU-less CI), longest task ≤ 100ms; the report is the product | `pnpm --filter @tape/perf perf:browser` |
 | — | scenarios (Tier 2 infra) | **hard** — fault-injection correctness, every assert gates | `pnpm --filter @tape/perf scenarios` |
 
 Tier 1 is low-noise and answers "did a tape-core hot path get slower?" in
@@ -83,9 +83,17 @@ p95FlushMs, JS heap delta (CDP `Runtime.getHeapUsage` — precise, unlike
 Chromium's quantized `performance.memory`, which is only the fallback).
 The **median run** is the one with the median p95 frame interval.
 
-**Gate (median run ONLY): p95 frame interval ≤ 25ms AND longest task
-≤ 100ms.** Everything else is report, not gate. The full 3-run report +
-median + environment goes to `tools/perf/report/frame-budget.json`
+**Gate (median run ONLY): p95 frame interval ≤ 25ms (locally) AND
+longest task ≤ 100ms.** Everything else is report, not gate. On CI the
+p95-frame gate widens to a 200ms catastrophic-regression backstop:
+GPU-less shared runners render through Chromium's software compositor,
+which vsync-quantizes frames at ~133ms (measured: p50 116.7 / p95
+133.4ms — exact 16.7ms multiples — with longest JS task 0.0ms across
+all runs), so frame cadence there measures the rasterizer, not tape.
+The longest-task gate is the one that watches our code, and it applies
+unchanged everywhere; the measured rationale lives as a comment on the
+gate constants in `browser/frame-budget.spec.ts`. The full 3-run report
++ median + environment goes to `tools/perf/report/frame-budget.json`
 (directory is gitignored); a compact table prints to stdout.
 
 ## Scenarios
