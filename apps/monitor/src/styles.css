@@ -1,0 +1,263 @@
+/* Tape Monitor — dark, dense, monospace. Data ink is neutral; the only
+ * accent colors are the up/down tints, always layered over signed text. */
+
+:root {
+  --bg: #0d1117;
+  --bg-deep: #010409;
+  --panel: #161b22;
+  --border: #21262d;
+  --ink: #c9d1d9;
+  --ink-dim: #8b949e;
+  --up: #3fb950;
+  --down: #f85149;
+  --accent: #58a6ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Header ---- */
+
+.app-header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  background: var(--bg-deep);
+  border-bottom: 1px solid var(--border);
+}
+
+.app-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.filter {
+  width: 220px;
+  padding: 3px 8px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.filter::placeholder {
+  color: var(--ink-dim);
+}
+
+.filter:focus {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.hint {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+/* ---- Layout ---- */
+
+.app-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.grid-pane {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-body {
+  flex: 1;
+  min-height: 0;
+}
+
+.grid-status {
+  flex: none;
+  padding: 3px 12px;
+  font-size: 12px;
+  color: var(--ink-dim);
+  background: var(--bg-deep);
+  border-top: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+}
+
+.side-pane {
+  flex: none;
+  width: 340px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.panel-header {
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-deep);
+}
+
+/* ---- Detail panel ---- */
+
+.detail {
+  flex: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.stats {
+  margin: 0;
+  padding: 8px 10px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  row-gap: 2px;
+  column-gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats dt {
+  color: var(--ink-dim);
+}
+
+.stats dd {
+  margin: 0;
+  text-align: right;
+}
+
+.detail-empty {
+  height: auto;
+  padding: 12px;
+}
+
+/* ---- Trade tape ---- */
+
+.tape {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tape-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.tape-row {
+  display: grid;
+  grid-template-columns: 92px 1fr 58px 42px 40px;
+  gap: 0 6px;
+  align-items: center;
+  height: 22px;
+  padding: 0 10px;
+  font-size: 12px;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(33, 38, 45, 0.5);
+}
+
+.tape-row.sel {
+  background: rgba(88, 166, 255, 0.09);
+}
+
+.tape-time {
+  color: var(--ink-dim);
+}
+
+.tape-sym {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tape-price,
+.tape-size {
+  text-align: right;
+}
+
+.tape-side {
+  text-align: right;
+  font-weight: 600;
+}
+
+/* ---- Shared ---- */
+
+/* Secondary tints, layered over signed text / BUY-SELL words only. */
+.up {
+  color: var(--up);
+}
+
+.down {
+  color: var(--down);
+}
+
+.empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  text-align: center;
+  color: var(--ink-dim);
+}
+
+/* One-shot flash when a displayed price changes: the keyed span remounts
+ * only when the formatted value differs, so this costs no extra renders. */
+.cell-flash {
+  display: inline-block;
+  padding: 0 2px;
+  border-radius: 2px;
+  animation: cell-flash 0.35s ease-out;
+}
+
+@keyframes cell-flash {
+  from {
+    background: rgba(139, 148, 158, 0.28);
+  }
+  to {
+    background: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell-flash {
+    animation: none;
+  }
+}
