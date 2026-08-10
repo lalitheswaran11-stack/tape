@@ -1,0 +1,37 @@
+{
+  "name": "@lalithesh-star/tape-codemod",
+  "version": "1.0.0",
+  "description": "jscodeshift codemods for tape-react major-version migrations. v1-to-v2: collapse useStream + useCoalesced into useSubscription.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "tape-codemod": "./bin/tape-codemod.mjs"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lalithesh-star/tape.git",
+    "directory": "packages/tape-codemod"
+  },
+  "scripts": {
+    "build": "tsup src/v1-to-v2.ts --format cjs --clean",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "jscodeshift": "^17.1.0"
+  },
+  "devDependencies": {
+    "@types/jscodeshift": "^0.12.0",
+    "@types/node": "^22.5.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.2.0"
+  }
+}
