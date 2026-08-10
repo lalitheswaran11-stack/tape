@@ -1,8 +1,8 @@
 /**
  * Tape Entry — order entry against the live instruments stream.
  *
- * One stream for the whole app: useStream + useCoalesced live here and the
- * Stream handle is passed down, so a single channel policy exists no
+ * One stream for the whole app: the useSubscription spec lives here and
+ * the Stream handle is passed down, so a single channel policy exists no
  * matter how many rows subscribe through it. `volume` is a running total
  * (deltas must sum — accumulate); every other field is current-state and
  * takes the default `latest`.

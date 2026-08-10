@@ -6,7 +6,7 @@
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { TapeClient } from '@lalithesh-star/tape-core';
-import { CanvasChart, useCoalesced, useStream } from '../src';
+import { CanvasChart, useSubscription } from '../src';
 import {
   fireAnimationFrames,
   makeHarness,
@@ -37,8 +37,10 @@ function ChartApp({
   client: TapeClient;
   recordId: string;
 }) {
-  const stream = useStream(client, 'quotes');
-  useCoalesced(stream, 'last', 'latest');
+  const stream = useSubscription(client, {
+    channel: 'quotes',
+    policy: { last: 'latest' },
+  });
   return (
     <CanvasChart stream={stream} recordId={recordId} field="last" height={160} />
   );

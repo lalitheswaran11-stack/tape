@@ -8,9 +8,7 @@
  * via core's resolveFieldPolicy normalization) do nothing, and a changed
  * spec closes the old subscription and opens a new one.
  *
- * It drives the same StreamHandle as the deprecated useStream +
- * useCoalesced pair — the two hooks differ only in where the policy comes
- * from (declarative spec vs. render-collected pending set), so the
+ * It drives the internal StreamHandle machinery in ./stream.ts, so the
  * returned Stream works unchanged with useRecord / useRecordIds /
  * VirtualGrid / CanvasChart.
  */

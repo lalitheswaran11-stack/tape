@@ -20,7 +20,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
 import type { TapeRecord } from '@lalithesh-star/tape-core';
 import type { Stream } from './stream';
-import { useStreamStore } from './stream';
+import { useHandleStore } from './stream';
 
 export interface ChartColors {
   line?: string;
@@ -90,7 +90,7 @@ export function CanvasChart(props: CanvasChartProps) {
   const paletteRef = useRef(palette);
   paletteRef.current = palette;
 
-  const store = useStreamStore(stream);
+  const store = useHandleStore(stream);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;

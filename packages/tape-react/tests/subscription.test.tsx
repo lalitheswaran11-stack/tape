@@ -1,7 +1,8 @@
 /**
- * useSubscription (v2): declarative spec, effect-time subscribe,
- * spec-equality no-ops, resubscribe-on-change, strict-mode hygiene, and
- * interop with useRecord / useRecordIds.
+ * useSubscription: declarative spec, effect-time subscribe, spec-equality
+ * no-ops, resubscribe-on-change, wire-level release on unmount,
+ * multi-channel independence, strict-mode hygiene, and interop with
+ * useRecord / useRecordIds.
  */
 
 import { act, cleanup, render, screen } from '@testing-library/react';
@@ -70,13 +71,67 @@ describe('useSubscription', () => {
     });
     expect(spy.mock.calls[0]![2]).toMatchObject({ priority: 2 });
 
+    // Data flows end-to-end into the component through the fake seams.
+    h.fetch.queueSnapshot(
+      snap('quotes', 3, [{ id: 'AAPL', fields: { last: 190, volume: 1000 } }]),
+    );
+    await act(async () => {
+      h.client.connect();
+      h.sockets.latest().open();
+      await settle();
+    });
+    expect(screen.getByTestId('last').textContent).toBe('190');
+
     // While mounted the channel is live: a mismatched policy throws (core).
     expect(() => h.client.subscribe('quotes', {})).toThrow();
 
     view.unmount();
-    // The channel is fully released: any policy subscribes fresh.
+    // Unmount released the subscription on the wire…
+    expect(
+      h.sockets.latest().sentOfType('unsubscribe').map((f) => f.channel),
+    ).toEqual(['quotes']);
+    // …and the channel is fully released: any policy subscribes fresh.
     const fresh = h.client.subscribe('quotes', {});
     fresh.close();
+  });
+
+  it('two components on different channels subscribe independently', async () => {
+    const h = makeHarness();
+    const spy = vi.spyOn(h.client, 'subscribe');
+    h.fetch.respondWith((channel) =>
+      snap(channel, 1, [{ id: 'AAPL', fields: { last: 190, volume: 5 } }]),
+    );
+
+    function ChannelQuotes({ channel }: { channel: string }) {
+      const stream = useSubscription(h.client, {
+        channel,
+        policy: { last: 'latest', volume: 'accumulate' },
+      });
+      const rec = useRecord(stream, 'AAPL');
+      return (
+        <div data-testid={`last-${channel}`}>
+          {String(rec?.fields['last'] ?? '-')}
+        </div>
+      );
+    }
+    const view = render(
+      <>
+        <ChannelQuotes channel="quotes" />
+        <ChannelQuotes channel="book" />
+      </>,
+    );
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy.mock.calls.map((c) => c[0]).sort()).toEqual(['book', 'quotes']);
+
+    // One connection carries both channels; data reaches both components.
+    await act(async () => {
+      h.client.connect();
+      h.sockets.latest().open();
+      await settle();
+    });
+    expect(screen.getByTestId('last-quotes').textContent).toBe('190');
+    expect(screen.getByTestId('last-book').textContent).toBe('190');
+    view.unmount();
   });
 
   it('useRecord and useRecordIds work through a useSubscription stream', async () => {

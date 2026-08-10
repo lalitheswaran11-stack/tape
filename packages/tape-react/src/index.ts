@@ -1,7 +1,6 @@
 export { useSubscription } from './subscription';
 export type { SubscriptionSpec } from './subscription';
-export { useStream, useCoalesced } from './stream';
-export type { Stream, StreamOptions } from './stream';
+export type { Stream } from './stream';
 export { useRecord, useRecordIds } from './records';
 export { useConnectionState, useMetrics } from './client-hooks';
 export { VirtualGrid, readRowRenderCount } from './VirtualGrid';

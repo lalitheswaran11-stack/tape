@@ -1,6 +1,6 @@
 /**
  * The one TapeClient for the app. Components never call client.subscribe
- * directly — they go through the v1 hooks (useStream + useCoalesced).
+ * directly — they go through useSubscription.
  */
 
 import { createTapeClient } from '@lalithesh-star/tape-core';

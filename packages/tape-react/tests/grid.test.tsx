@@ -6,12 +6,7 @@
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { TapeClient } from '@lalithesh-star/tape-core';
-import {
-  readRowRenderCount,
-  useCoalesced,
-  useStream,
-  VirtualGrid,
-} from '../src';
+import { readRowRenderCount, useSubscription, VirtualGrid } from '../src';
 import type { ColumnDef } from '../src';
 import {
   makeHarness,
@@ -39,9 +34,10 @@ function GridApp({
   client: TapeClient;
   onRowClick?: (id: string) => void;
 }) {
-  const stream = useStream(client, 'grid');
-  useCoalesced(stream, 'last', 'latest');
-  useCoalesced(stream, 'volume', 'accumulate');
+  const stream = useSubscription(client, {
+    channel: 'grid',
+    policy: { last: 'latest', volume: 'accumulate' },
+  });
   return (
     <VirtualGrid
       stream={stream}

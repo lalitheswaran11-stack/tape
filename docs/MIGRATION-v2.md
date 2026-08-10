@@ -2,7 +2,9 @@
 
 Audience: teams consuming `@lalithesh-star/tape-react`. This guide covers
 the move from the v1 subscription pair (`useStream` + `useCoalesced`) to
-the v2 hook `useSubscription`, introduced in **tape-react 1.1.0**.
+the v2 hook `useSubscription`. The v2 hook was introduced in **tape-react
+1.1.0**; the v1 pair is **removed as of tape-react 2.0.0**, so complete
+this migration on 1.x before upgrading.
 
 ## What changed, and why
 
@@ -58,12 +60,12 @@ components (`VirtualGrid`, `CanvasChart`, `ConnectionBanner`, `PerfHud`)
 are **unchanged**. They accept the `Stream` handle returned by either
 hook — you can migrate one subscription at a time.
 
-## Deprecation timeline
+## Timeline
 
 | Version | Status |
 | --- | --- |
-| **1.1.0** (now) | `useSubscription` available. `useStream` and `useCoalesced` deprecated: `@deprecated` in the types, and each hook logs **one** `console.warn` per session on its first call (never per call). Fully functional otherwise — 1.1.0 is non-breaking. |
-| **2.0.0** | `useStream` and `useCoalesced` are **removed**. |
+| **1.1.0** | `useSubscription` available. `useStream` and `useCoalesced` deprecated: `@deprecated` in the types, and each hook logs **one** `console.warn` per session on its first call (never per call). Fully functional otherwise — 1.1.0 is non-breaking. |
+| **2.0.0** (shipped) | `useStream` and `useCoalesced` are **removed**. Code still calling them fails to typecheck/build against 2.0.0 — migrate on 1.x first, then upgrade. |
 
 ## The codemod
 
@@ -129,10 +131,11 @@ bail-out — any channel expression passes through into `{ channel: ... }`.
 
 ## Checklist
 
-1. Upgrade `@lalithesh-star/tape-react` to `^1.1.0`.
+1. On `@lalithesh-star/tape-react` `^1.1.0` (upgrade to it first if you
+   are on an earlier 1.x — the codemod targets 1.x sources):
 2. `pnpm exec tape-codemod v1-to-v2 src --dry` — review the preview.
 3. `pnpm exec tape-codemod v1-to-v2 src` — apply.
 4. Search for `TODO(tape-codemod)` and migrate those sites by hand.
 5. Typecheck and run your tests. The deprecation warnings are gone when
    no v1 call sites remain.
-6. You are ready for 2.0.0.
+6. Upgrade to `@lalithesh-star/tape-react` `^2.0.0`.

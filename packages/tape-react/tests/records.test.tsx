@@ -7,7 +7,7 @@ import { act, cleanup, render, screen } from '@testing-library/react';
 import { memo } from 'react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { TapeClient } from '@lalithesh-star/tape-core';
-import { useCoalesced, useRecord, useRecordIds, useStream } from '../src';
+import { useRecord, useRecordIds, useSubscription } from '../src';
 import type { Stream } from '../src';
 import { makeHarness, settle, snap, upd } from './helpers';
 
@@ -34,8 +34,10 @@ const Reader = memo(function Reader({
 });
 
 function TwoReaders({ client }: { client: TapeClient }) {
-  const stream = useStream(client, 'quotes');
-  useCoalesced(stream, 'last', 'latest');
+  const stream = useSubscription(client, {
+    channel: 'quotes',
+    policy: { last: 'latest' },
+  });
   return (
     <>
       <Reader stream={stream} id="AAPL" />
@@ -45,8 +47,10 @@ function TwoReaders({ client }: { client: TapeClient }) {
 }
 
 function IdsView({ client }: { client: TapeClient }) {
-  const stream = useStream(client, 'quotes');
-  useCoalesced(stream, 'last', 'latest');
+  const stream = useSubscription(client, {
+    channel: 'quotes',
+    policy: { last: 'latest' },
+  });
   const ids = useRecordIds(stream);
   idsRenders++;
   return <div data-testid="ids">{ids.join(',')}</div>;

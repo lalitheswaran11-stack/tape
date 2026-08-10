@@ -1,13 +1,10 @@
 /**
- * useStream + useCoalesced — the render-phase policy-collection pair.
- * DEPRECATED since 1.1.0 (removal in 2.0.0) in favor of the declarative
- * useSubscription in ./subscription.ts, which drives the same StreamHandle.
+ * StreamHandle — the internal machinery behind useSubscription (the
+ * declarative hook in ./subscription.ts).
  *
- * useStream returns a Stream handle whose identity is stable for the
- * component instance (per client + channel). Each render pass resets the
- * handle's policy collection; subsequent useCoalesced calls in the same
- * render register per-field policies onto it. After the render commits, an
- * effect inside useStream reconciles: if the collected policy and options
+ * The handle's identity is stable for the component instance (per client +
+ * channel). After each commit, useSubscription reconciles the declarative
+ * spec against the live subscription: if the spec's policy and options
  * deep-equal the live subscription's, nothing happens; otherwise the old
  * subscription is closed and a new one opened via client.subscribe (which
  * is refcounted per channel in tape-core).
@@ -17,10 +14,9 @@
  * available or is replaced — no polling, no tearing.
  */
 
-import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 import { resolveFieldPolicy } from '@lalithesh-star/tape-core';
 import type {
-  PolicyEntry,
   PolicySpec,
   RecordStore,
   Subscription,
@@ -28,6 +24,7 @@ import type {
   Unsubscribe,
 } from '@lalithesh-star/tape-core';
 
+/** @internal Options reconciled alongside the policy (see reconcile). */
 export interface StreamOptions {
   /** Flush priority under backpressure — higher flushes first. Default 0. */
   priority?: number;
@@ -77,8 +74,6 @@ export class StreamHandle implements Stream {
   private activePolicy: PolicySpec | null = null;
   private activeOpts: StreamOptions | undefined = undefined;
   private readonly listeners = new Set<() => void>();
-  /** Field policies collected during the current render pass. */
-  private pending: Record<string, PolicyEntry> = {};
 
   constructor(client: TapeClient, channel: string) {
     this.client = client;
@@ -93,27 +88,11 @@ export class StreamHandle implements Stream {
     return this;
   }
 
-  /** Render phase: start a fresh policy collection for this render pass. */
-  beginRender(): void {
-    this.pending = {};
-  }
-
-  /** Render phase (useCoalesced): register one field. Last write wins. */
-  registerField(field: string, policy: PolicyEntry): void {
-    this.pending[field] = policy;
-  }
-
-  /** Commit phase (v1): reconcile with the render-collected policy. */
-  commit(opts: StreamOptions | undefined): void {
-    this.reconcile(this.pending, opts);
-  }
-
   /**
    * Reconcile the live subscription against an explicit policy + options.
-   * Shared by both APIs: useStream funnels the render-collected policy in
-   * via commit(); useSubscription passes the declarative spec's policy
-   * directly. Deep-equal (post resolveFieldPolicy normalization) → no-op;
-   * changed → close then resubscribe.
+   * Called from useSubscription's post-commit effect with the declarative
+   * spec's policy. Deep-equal (post resolveFieldPolicy normalization) →
+   * no-op; changed → close then resubscribe.
    */
   reconcile(policy: PolicySpec, opts: StreamOptions | undefined): void {
     if (
@@ -214,92 +193,15 @@ export class StreamHandle implements Stream {
 export function asHandle(stream: Stream, hook: string): StreamHandle {
   if (!(stream instanceof StreamHandle)) {
     throw new Error(
-      `tape-react: ${hook} was given a Stream that did not come from useStream`,
+      `tape-react: ${hook} was given a Stream that did not come from useSubscription`,
     );
   }
   return stream;
 }
 
-// ---------------------------------------------------------------------------
-// Deprecation warnings — once per hook per session, never per call.
-
-const deprecationWarned = { useStream: false, useCoalesced: false };
-
-/** @internal */
-function warnDeprecatedOnce(hook: 'useStream' | 'useCoalesced'): void {
-  if (deprecationWarned[hook]) return;
-  deprecationWarned[hook] = true;
-  console.warn(
-    `[tape-react] ${hook}() is deprecated and will be removed in 2.0.0; ` +
-      'use useSubscription({ channel, policy }). ' +
-      'Run: pnpm exec tape-codemod v1-to-v2 <src> — see docs/MIGRATION-v2.md',
-  );
-}
-
-/**
- * @deprecated Removed in 2.0.0 — use `useSubscription(client, { channel,
- * policy, priority, snapshot })` instead (declarative policy at the
- * subscription site). See docs/MIGRATION-v2.md, or run
- * `pnpm exec tape-codemod v1-to-v2 <src>`.
- */
-export function useStream(
-  client: TapeClient,
-  channel: string,
-  opts?: StreamOptions,
-): Stream {
-  warnDeprecatedOnce('useStream');
-  const ref = useRef<StreamHandle | null>(null);
-  if (
-    ref.current === null ||
-    ref.current.client !== client ||
-    ref.current.channel !== channel
-  ) {
-    ref.current = new StreamHandle(client, channel);
-  }
-  const handle = ref.current;
-  handle.beginRender();
-
-  const optsRef = useRef(opts);
-  optsRef.current = opts;
-
-  // Reconcile after EVERY commit — by effect time all useCoalesced calls of
-  // this render pass have registered. Deep-equal policy + options → no-op.
-  useEffect(() => {
-    handle.commit(optsRef.current);
-  });
-
-  // Lifecycle: close on unmount or handle replacement (client/channel
-  // changed). Strict mode's simulated unmount closes here and the commit
-  // effect above resubscribes on remount — combined with tape-core's
-  // refcounted subscribe this neither leaks nor double-subscribes.
-  useEffect(() => () => handle.teardown(), [handle]);
-
-  return handle;
-}
-
-/**
- * Render-phase registration of one field's coalescing policy onto the
- * stream for this render pass. Call between useStream and the end of the
- * same component's render, any number of times. Fields never registered
- * default to 'latest' (core behavior).
- *
- * @deprecated Removed in 2.0.0 — declare the policy in `useSubscription`'s
- * spec instead: `useSubscription(client, { channel, policy: { field:
- * policy } })`. See docs/MIGRATION-v2.md, or run
- * `pnpm exec tape-codemod v1-to-v2 <src>`.
- */
-export function useCoalesced(
-  stream: Stream,
-  field: string,
-  policy: PolicyEntry,
-): void {
-  warnDeprecatedOnce('useCoalesced');
-  asHandle(stream, 'useCoalesced').registerField(field, policy);
-}
-
 /** @internal The stream's store as a subscribable value (null until live). */
-export function useStreamStore(stream: Stream): RecordStore | null {
-  const handle = asHandle(stream, 'useStreamStore');
+export function useHandleStore(stream: Stream): RecordStore | null {
+  const handle = asHandle(stream, 'useHandleStore');
   const subscribe = useCallback(
     (cb: () => void) => handle.subscribeHandle(cb),
     [handle],

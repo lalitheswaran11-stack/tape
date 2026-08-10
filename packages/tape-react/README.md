@@ -5,11 +5,10 @@ subscription hooks built on `useSyncExternalStore`, a virtualized grid with
 **per-visible-row subscriptions**, a DPR-aware canvas chart, a connection
 banner, and a performance HUD.
 
-As of **1.1.0** the primary subscription API is the declarative
-`useSubscription` hook. The imperative v1 pair (`useStream` +
-`useCoalesced`) still works but is deprecated and will be removed in
-2.0.0 — see [Deprecated](#deprecated-removal-in-200) and
-[Migration](#migrating-from-v1) below.
+The subscription API is the declarative `useSubscription` hook. **2.0.0
+removed** the imperative v1 pair (`useStream` + `useCoalesced`) that was
+deprecated in 1.1.0 — if you are upgrading from 1.x, see
+[Migrating from 1.x](#migrating-from-1x) below.
 
 ## The hooks
 
@@ -89,35 +88,26 @@ function Quotes() {
 }
 ```
 
-## Deprecated (removal in 2.0.0)
+## Migrating from 1.x
 
-The v1 pair still works in 1.1.0 exactly as before, but each hook logs a
-one-time-per-session `console.warn` and both will be **removed in
-2.0.0**:
+**2.0.0 removed `useStream` and `useCoalesced`** (deprecated since
+1.1.0). Their replacement is `useSubscription(client, { channel, policy,
+priority, snapshot })` — the same subscription expressed as one
+declarative spec instead of imperative render-phase policy registration.
+The `Stream` handle it returns works with `useRecord` / `useRecordIds` /
+`VirtualGrid` / `CanvasChart` exactly as before; nothing else in the
+package changed shape.
 
-| Hook | What it did | Replace with |
-| --- | --- | --- |
-| `useStream(client, channel, opts?)` | Returns a `Stream` handle; subscribes after commit with the policy collected by `useCoalesced` during the render. `opts` is `{ priority?, snapshot? }`. | `useSubscription(client, { channel, policy, ...opts })` |
-| `useCoalesced(stream, field, policy)` | Render-phase registration of one field's coalescing policy (`'latest' \| 'accumulate' \| 'sequence' \| { policy: 'sequence', capacity }`), called between `useStream` and the end of the same component's render. | An entry in the spec's `policy` object |
-
-The flaw the v2 API fixes: with the pair, a subscription's policy was
-**implicit** — scattered across imperative render-phase calls that had to
-run in the right place, could not be seen in one place, and made the
-"one live policy per channel" invariant easy to violate by accident.
-`useSubscription` makes the policy declarative at the subscription site.
-
-Both hooks drive the same internal machinery, so `Stream` handles from
-either API work with `useRecord` / `useRecordIds` / `VirtualGrid` /
-`CanvasChart` unchanged.
-
-## Migrating from v1
-
-See [docs/MIGRATION-v2.md](../../docs/MIGRATION-v2.md) for the full
-guide. Most call sites migrate mechanically:
+If you are on 1.x, migrate **before** upgrading: most call sites rewrite
+mechanically with the codemod (run it against your 1.x sources):
 
 ```
 pnpm exec tape-codemod v1-to-v2 src        # add --dry to preview
 ```
+
+then search for `TODO(tape-codemod)` markers and finish those few sites
+by hand. The full guide, including every bail-out case, is
+[docs/MIGRATION-v2.md](../../docs/MIGRATION-v2.md).
 
 ## Per-visible-row subscriptions — why this grid stays fast
 
