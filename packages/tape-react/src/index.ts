@@ -1,3 +1,5 @@
+export { useSubscription } from './subscription';
+export type { SubscriptionSpec } from './subscription';
 export { useStream, useCoalesced } from './stream';
 export type { Stream, StreamOptions } from './stream';
 export { useRecord, useRecordIds } from './records';

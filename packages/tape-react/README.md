@@ -5,29 +5,32 @@ subscription hooks built on `useSyncExternalStore`, a virtualized grid with
 **per-visible-row subscriptions**, a DPR-aware canvas chart, a connection
 banner, and a performance HUD.
 
-This is the deliberately imperative **v1** hooks API. A future major will
-replace the `useStream` + `useCoalesced` pair with a single declarative
-hook; until then, this pair is the product.
+As of **1.1.0** the primary subscription API is the declarative
+`useSubscription` hook. The imperative v1 pair (`useStream` +
+`useCoalesced`) still works but is deprecated and will be removed in
+2.0.0 — see [Deprecated](#deprecated-removal-in-200) and
+[Migration](#migrating-from-v1) below.
 
-## The v1 hooks
+## The hooks
 
 | Hook | What it does |
 | --- | --- |
-| `useStream(client, channel, opts?)` | Returns a `Stream` handle, stable for the component instance. Subscribes after commit with the policy collected by `useCoalesced` during the render. `opts` is `{ priority?, snapshot? }`. |
-| `useCoalesced(stream, field, policy)` | Render-phase registration of one field's coalescing policy (`'latest' \| 'accumulate' \| 'sequence' \| { policy: 'sequence', capacity }`). Call between `useStream` and the end of the same component's render, any number of times. Unregistered fields default to `latest`. |
+| `useSubscription(client, spec)` | **The subscription API.** `spec` is `{ channel, policy?, priority?, snapshot? }` — the whole subscription, including every field's coalescing policy, declared in one place. Returns a `Stream` handle, stable for the component instance. |
 | `useRecord(stream, id)` | The record, via a per-record store subscription — re-renders **only** when that record changes. `undefined` before the subscription is live (no tearing). |
 | `useRecordIds(stream)` | The store's cached ids array — re-renders on membership changes only, never on value ticks. |
 | `useConnectionState(client)` | `'idle' \| 'connecting' \| 'live' \| 'degraded' \| 'resyncing' \| 'disconnected'`, event-driven. |
 | `useMetrics(client, intervalMs?)` | Polls `getMetrics()` (default every 500 ms). |
 
-### How the pair works
+### How useSubscription works
 
-During each render, `useStream` resets the handle's policy collection and
-every `useCoalesced` call registers one field onto it. After the render
-commits, an effect inside `useStream` compares the collected policy and
-options against the live subscription: deep-equal → nothing happens (fresh
-object literals every render are fine); changed → the old subscription is
-closed and a new one opened. Unmount closes. Under React strict mode's
+The subscription is established in an effect after the render commits.
+On every re-render the spec is compared against the live subscription
+**semantically**: policies deep-equal after core's `resolveFieldPolicy`
+normalization (so `'sequence'` equals `{ policy: 'sequence', capacity:
+256 }`), options default-filled (`{ priority: 0 }` equals omitting
+`priority`). Equal → nothing happens — fresh object literals every render
+are fine, no `useMemo` needed. Changed → the old subscription is closed
+and a new one opened. Unmount closes. Under React strict mode's
 mount → unmount → remount cycle this closes and cleanly resubscribes —
 tape-core's refcounted `subscribe` guarantees no leak and no
 double-subscription.
@@ -42,7 +45,7 @@ spellings identical across components that share a channel.
 ```tsx
 import { createTapeClient } from '@lalithesh-star/tape-core';
 import {
-  ConnectionBanner, PerfHud, useCoalesced, useRecordIds, useStream, VirtualGrid,
+  ConnectionBanner, PerfHud, useRecordIds, useSubscription, VirtualGrid,
 } from '@lalithesh-star/tape-react';
 import type { ColumnDef } from '@lalithesh-star/tape-react';
 
@@ -58,10 +61,15 @@ const columns: ColumnDef[] = [
 ];
 
 function Quotes() {
-  const stream = useStream(client, 'quotes', { priority: 1 });
-  useCoalesced(stream, 'last', 'latest');            // newest value wins
-  useCoalesced(stream, 'volume', 'accumulate');      // deltas sum, nothing lost
-  useCoalesced(stream, 'trades', { policy: 'sequence', capacity: 64 });
+  const stream = useSubscription(client, {
+    channel: 'quotes',
+    policy: {
+      last: 'latest',                              // newest value wins
+      volume: 'accumulate',                        // deltas sum, nothing lost
+      trades: { policy: 'sequence', capacity: 64 },
+    },
+    priority: 1,
+  });
 
   const ids = useRecordIds(stream); // the app owns filtering/sorting
 
@@ -79,6 +87,36 @@ function Quotes() {
     </div>
   );
 }
+```
+
+## Deprecated (removal in 2.0.0)
+
+The v1 pair still works in 1.1.0 exactly as before, but each hook logs a
+one-time-per-session `console.warn` and both will be **removed in
+2.0.0**:
+
+| Hook | What it did | Replace with |
+| --- | --- | --- |
+| `useStream(client, channel, opts?)` | Returns a `Stream` handle; subscribes after commit with the policy collected by `useCoalesced` during the render. `opts` is `{ priority?, snapshot? }`. | `useSubscription(client, { channel, policy, ...opts })` |
+| `useCoalesced(stream, field, policy)` | Render-phase registration of one field's coalescing policy (`'latest' \| 'accumulate' \| 'sequence' \| { policy: 'sequence', capacity }`), called between `useStream` and the end of the same component's render. | An entry in the spec's `policy` object |
+
+The flaw the v2 API fixes: with the pair, a subscription's policy was
+**implicit** — scattered across imperative render-phase calls that had to
+run in the right place, could not be seen in one place, and made the
+"one live policy per channel" invariant easy to violate by accident.
+`useSubscription` makes the policy declarative at the subscription site.
+
+Both hooks drive the same internal machinery, so `Stream` handles from
+either API work with `useRecord` / `useRecordIds` / `VirtualGrid` /
+`CanvasChart` unchanged.
+
+## Migrating from v1
+
+See [docs/MIGRATION-v2.md](../../docs/MIGRATION-v2.md) for the full
+guide. Most call sites migrate mechanically:
+
+```
+pnpm exec tape-codemod v1-to-v2 src        # add --dry to preview
 ```
 
 ## Per-visible-row subscriptions — why this grid stays fast
