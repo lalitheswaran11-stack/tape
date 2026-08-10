@@ -3,6 +3,7 @@ dist/
 coverage/
 test-results/
 playwright-report/
+tools/perf/report/
 .vite/
 *.tsbuildinfo
 *.log

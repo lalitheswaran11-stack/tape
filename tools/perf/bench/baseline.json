@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-08-10T01:53:24.297Z",
+  "node": "v22.23.1",
+  "platform": "darwin/arm64",
+  "tolerance": 0.25,
+  "calibrationNsPerOp": 1570,
+  "benchmarks": {
+    "snapshot-sync": {
+      "bestNs": 1525416,
+      "unit": "ms/sync",
+      "score": 957.625
+    },
+    "ingest": {
+      "bestNs": 2509,
+      "unit": "ns/msg",
+      "score": 1.597
+    },
+    "flush-drain": {
+      "bestNs": 2566459,
+      "unit": "ms/drain",
+      "score": 1639.761
+    },
+    "e2e-frame": {
+      "bestNs": 4111,
+      "unit": "ns/msg",
+      "score": 2.627
+    }
+  }
+}
