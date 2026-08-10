@@ -1,6 +1,6 @@
 {
   "name": "@lalithesh-star/tape-core",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Framework-free core for real-time UIs: WebSocket transport with jittered reconnect and sequence-gap detection, a per-field coalescing buffer with frame-budgeted flush, and a subscription record store.",
   "license": "MIT",
   "type": "module",
